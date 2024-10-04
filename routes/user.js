@@ -33,7 +33,7 @@ router.post('/signin', async(req,res)=>{
    try {
     const token= await User.matchPasswordAndGenerateToken(email,password);
 
-    console.log("token" , token)
+   
 
    return  res.cookie("token", token).redirect('/');
    } catch (error) {

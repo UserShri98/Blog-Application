@@ -1,4 +1,4 @@
-const { Schema, model, trusted } = require("mongoose");
+const { Schema, model, trusted, default: mongoose } = require("mongoose");
 
 const blogSchema= new Schema({
     title:{
@@ -17,4 +17,8 @@ const blogSchema= new Schema({
         ref:"user",
     },
 },{timestamps:true}
-)
+);
+
+const Blog=model("blog",blogSchema);
+
+module.exports=Blog;
