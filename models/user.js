@@ -30,27 +30,22 @@ const userSchema = new Schema({
     },
 }, { timestamps: true });
 
-// Hash the password before saving
 userSchema.pre('save', function (next) {
     const user = this;
 
-    // Only hash the password if it has been modified
     if (!user.isModified("password")) return next();
 
-    // Generate a salt and hash the password
     const salt = randomBytes(16).toString("hex");
     const hashedPassword = createHmac("sha256", salt)
         .update(user.password)
         .digest("hex");
 
-    // Set the salt and the hashed password on the user object
     user.salt = salt;
     user.password = hashedPassword;
 
     next();
 });
 
-// Static method to match passwords
 userSchema.static("matchPasswordAndGenerateToken", async function (email, password) {
     const user = await this.findOne({ email });
 
@@ -59,7 +54,6 @@ userSchema.static("matchPasswordAndGenerateToken", async function (email, passwo
     const salt = user.salt;
     const hashedPassword = user.password;
 
-    // Check if the salt is undefined or not present
     if (!salt) throw new Error("Salt is missing from the user");
 
     const userProvidedPassword = createHmac("sha256", salt)
@@ -72,7 +66,6 @@ userSchema.static("matchPasswordAndGenerateToken", async function (email, passwo
     return token;
 });
 
-// Create the User model
 const User = model("user", userSchema);
 
 module.exports = User;
